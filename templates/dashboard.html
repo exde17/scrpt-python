@@ -1,0 +1,59 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', path='/style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Bienvenido</h1>
+    <div>
+        <h2>Reportes</h2>
+        <canvas id="grafica_secciones" width="500" height="400"></canvas>
+    </div>
+
+    <script>
+        async function cargarGraficas() {
+            try {
+                // Llama al endpoint /reportes para obtener los datos
+                const response = await fetch('/reportes');
+                const data = await response.json();
+
+                // Gráfica de Scores de Secciones
+                const ctxSecciones = document.getElementById('grafica_secciones').getContext('2d');
+                new Chart(ctxSecciones, {
+                    type: 'bar',
+                    data: {
+                        labels: data.section_labels,
+                        datasets: [{
+                            label: 'Porcentaje de Score por Sección',
+                            data: data.section_scores,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                max: 100 // Ajusta el máximo al 100%
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error al cargar las gráficas:', error);
+            }
+        }
+
+        // Llama a la función para cargar las gráficas al cargar la página
+        cargarGraficas();
+    </script>
+</body>
+</html>
